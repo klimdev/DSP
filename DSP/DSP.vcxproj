@@ -223,6 +223,14 @@
     <ClInclude Include="..\DearImGui\stb_rect_pack.h" />
     <ClInclude Include="..\DearImGui\stb_textedit.h" />
     <ClInclude Include="..\DearImGui\stb_truetype.h" />
+    <ClInclude Include="..\FMOD\inc\fmod.h" />
+    <ClInclude Include="..\FMOD\inc\fmod.hpp" />
+    <ClInclude Include="..\FMOD\inc\fmod_codec.h" />
+    <ClInclude Include="..\FMOD\inc\fmod_common.h" />
+    <ClInclude Include="..\FMOD\inc\fmod_dsp.h" />
+    <ClInclude Include="..\FMOD\inc\fmod_dsp_effects.h" />
+    <ClInclude Include="..\FMOD\inc\fmod_errors.h" />
+    <ClInclude Include="..\FMOD\inc\fmod_output.h" />
     <ClInclude Include="ImGuiBase.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="PolarForm.h" />

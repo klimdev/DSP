@@ -3,6 +3,9 @@
 #include <complex>
 #include "ImGuiBase.h"
 
+// cos
+// sin
+
 class PolarForm : public ImGuiBase
 {
 public:
@@ -19,8 +22,8 @@ public:
 	//get real(theta)
 	//get img(theta)
 
-
 	//operator^ double
+	//operator/ polarform
 	//conj
 
 	// Inherited via ImGuiBase

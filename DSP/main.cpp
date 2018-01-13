@@ -9,6 +9,7 @@
 #include <tchar.h>
 
 #include "Menu.h"
+#include "PolarForm.h"
 
 // Data
 static ID3D11Device*            g_pd3dDevice = NULL;
@@ -153,7 +154,7 @@ int main(int, char**)
     bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-		bool demo = true;
+		bool demo = false;
 		MainMenu test;
 
     // Main loop
@@ -173,14 +174,18 @@ int main(int, char**)
         }
         ImGui_ImplDX11_NewFrame();
 
-				if (!demo)
+				//if (!demo)
 				{
 
-				test.BeginDraw();
-				test.InnerDraw();
-				test.EndDraw();
+					test.BeginDraw();
+					test.InnerDraw();
+					test.EndDraw();
+
+					PolarForm pf;
+					pf.InnerDraw();
+
 				}
-				else
+				//else
 				{
 
         // 1. Show a simple window.

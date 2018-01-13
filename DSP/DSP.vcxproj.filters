@@ -22,14 +22,17 @@
     <Filter Include="Base">
       <UniqueIdentifier>{870b5d02-5fd1-4b04-afdd-b580ba315b03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FMOD">
+      <UniqueIdentifier>{399462f8-d5fe-4a60-ac11-976faa3ed505}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ImGui\DearImGui">
+      <UniqueIdentifier>{38e9823c-4fc0-4274-9e75-93009c876ecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base\Math">
+      <UniqueIdentifier>{8f351837-e7a7-4e1b-93b3-98420bc5f9a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\DearImGui\imgui.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\DearImGui\imgui_draw.cpp">
-      <Filter>ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="..\DearImGui\DX11\imgui_impl_dx11.cpp">
       <Filter>ImGui\DX11</Filter>
     </ClCompile>
@@ -45,24 +48,15 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="..\DearImGui\imgui.cpp">
+      <Filter>ImGui\DearImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\DearImGui\imgui_draw.cpp">
+      <Filter>ImGui\DearImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DearImGui\imconfig.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DearImGui\imgui.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DearImGui\imgui_internal.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DearImGui\stb_rect_pack.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DearImGui\stb_textedit.h">
-      <Filter>ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\DearImGui\stb_truetype.h">
       <Filter>ImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\DearImGui\DX11\imgui_impl_dx11.h">
@@ -76,6 +70,45 @@
     </ClInclude>
     <ClInclude Include="Menu.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod.hpp">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod_codec.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod_common.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod_dsp.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod_dsp_effects.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod_errors.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\FMOD\inc\fmod_output.h">
+      <Filter>FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DearImGui\imgui.h">
+      <Filter>ImGui\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DearImGui\imgui_internal.h">
+      <Filter>ImGui\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DearImGui\stb_rect_pack.h">
+      <Filter>ImGui\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DearImGui\stb_textedit.h">
+      <Filter>ImGui\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DearImGui\stb_truetype.h">
+      <Filter>ImGui\DearImGui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
