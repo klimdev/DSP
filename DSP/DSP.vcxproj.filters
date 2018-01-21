@@ -31,6 +31,9 @@
     <Filter Include="Base\Math">
       <UniqueIdentifier>{8f351837-e7a7-4e1b-93b3-98420bc5f9a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Base\FmodSound">
+      <UniqueIdentifier>{b1b75dcf-61be-43dc-9148-4dd4bbb030ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DearImGui\DX11\imgui_impl_dx11.cpp">
@@ -53,6 +56,12 @@
     </ClCompile>
     <ClCompile Include="..\DearImGui\imgui_draw.cpp">
       <Filter>ImGui\DearImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundStream.cpp">
+      <Filter>Base\FmodSound</Filter>
+    </ClCompile>
+    <ClCompile Include="FmodSystem.cpp">
+      <Filter>Base\FmodSound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +118,15 @@
     </ClInclude>
     <ClInclude Include="..\DearImGui\stb_truetype.h">
       <Filter>ImGui\DearImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundStream.h">
+      <Filter>Base\FmodSound</Filter>
+    </ClInclude>
+    <ClInclude Include="FmodSystem.h">
+      <Filter>Base\FmodSound</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
