@@ -2,8 +2,9 @@
 
 #include "Common.h"
 
+FmodSystemClass FmodSystem;
 
-FmodSystem::FmodSystem()
+FmodSystemClass::FmodSystemClass()
 {
 	/*
 	Create a System object and initialize.
@@ -25,8 +26,13 @@ FmodSystem::FmodSystem()
 }
 
 
-FmodSystem::~FmodSystem()
+FmodSystemClass::~FmodSystemClass()
 {
 	FMOD_CHECK(pSystem->close());
 	FMOD_CHECK(pSystem->release());
+}
+
+FMOD::System * FmodSystemClass::operator()() const
+{
+	return pSystem;
 }

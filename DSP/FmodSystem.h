@@ -2,12 +2,16 @@
 
 #include <fmod.hpp>
 
-class FmodSystem
+class FmodSystemClass
 {
 public:
-	FmodSystem();
-	~FmodSystem();
+	FMOD::System* operator()() const;
+
+private:
+	FmodSystemClass();
+	~FmodSystemClass();
 
 	FMOD::System           *pSystem;
 };
 
+extern FmodSystemClass FmodSystem;
