@@ -25,11 +25,13 @@ public:
 	//operator^ double
 	//operator/ polarform
 	//conj
+	//length
 
 	// Inherited via ImGuiBase
 	virtual void BeginDraw() override;
 	virtual void InnerDraw() override;
 	virtual void EndDraw() override;
+
 };
 
 // Vector

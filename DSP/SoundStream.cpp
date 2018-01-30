@@ -20,8 +20,8 @@ SoundStream::SoundStream()
 	exinfo.decodebuffersize = 44100;                           // Chunk size of stream update in samples. This will be the amount of data passed to the user callback. 
 	exinfo.length = exinfo.defaultfrequency * exinfo.numchannels * sizeof(signed short) * 5; // Length of PCM data in bytes of whole song (for Sound::getLength) 
 	exinfo.format = FMOD_SOUND_FORMAT_PCM16;         // Data format of sound. 
-	//exinfo.pcmreadcallback = pcmreadcallback;                 // User callback for reading. 
-	//exinfo.pcmsetposcallback = pcmsetposcallback;               // User callback for seeking. 
+	exinfo.pcmreadcallback = this->StreamReadCallback;                 // User callback for reading. 
+	exinfo.pcmsetposcallback = this->StreamSetPosCallback;               // User callback for seeking. 
 
 	FMOD_CHECK(FmodSystem()->createSound(0, mode, &exinfo, &pSound));
 }

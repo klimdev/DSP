@@ -15,4 +15,3 @@ public:
 
 //window
 	//childs window
-

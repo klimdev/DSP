@@ -63,6 +63,9 @@
     <ClCompile Include="FmodSystem.cpp">
       <Filter>Base\FmodSound</Filter>
     </ClCompile>
+    <ClCompile Include="Equation.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DearImGui\imconfig.h">
@@ -126,6 +129,9 @@
       <Filter>Base\FmodSound</Filter>
     </ClInclude>
     <ClInclude Include="Common.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Equation.h">
       <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>

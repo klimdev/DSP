@@ -211,6 +211,7 @@
     <ClCompile Include="..\DearImGui\imgui.cpp" />
     <ClCompile Include="..\DearImGui\imgui_demo.cpp" />
     <ClCompile Include="..\DearImGui\imgui_draw.cpp" />
+    <ClCompile Include="Equation.cpp" />
     <ClCompile Include="FmodSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="..\FMOD\inc\fmod_errors.h" />
     <ClInclude Include="..\FMOD\inc\fmod_output.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="Equation.h" />
     <ClInclude Include="FmodSystem.h" />
     <ClInclude Include="ImGuiBase.h" />
     <ClInclude Include="Menu.h" />
