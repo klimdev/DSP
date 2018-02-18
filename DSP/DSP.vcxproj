@@ -133,6 +133,9 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/x64;%(AdditionalDependencies);$(SolutionDir)FMOD\lib\</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmodL64_vc.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command> xcopy /d /y "$(SolutionDir)FMOD\lib\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -187,6 +190,9 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/x64;%(AdditionalDependencies);$(SolutionDir)FMOD\lib\</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmodL64_vc.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command> xcopy /d /y "$(SolutionDir)FMOD\lib\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Publish|x64'">
     <ClCompile>
@@ -205,24 +211,31 @@
       <AdditionalLibraryDirectories>$(DXSDK_DIR)Lib/x64;%(AdditionalDependencies);$(SolutionDir)FMOD\lib\</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmod64_vc.lib;d3d11.lib;d3dcompiler.lib;dxgi.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command> xcopy /d /y "$(SolutionDir)FMOD\lib\*.dll" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\DearImGui\DX11\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\DearImGui\imgui.cpp" />
     <ClCompile Include="..\DearImGui\imgui_demo.cpp" />
     <ClCompile Include="..\DearImGui\imgui_draw.cpp" />
+    <ClCompile Include="Angle.cpp" />
     <ClCompile Include="Equation.cpp" />
     <ClCompile Include="FmodSystem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PolarForm.cpp" />
     <ClCompile Include="SoundStream.cpp" />
+    <ClCompile Include="Trigonometric.cpp" />
+    <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DearImGui\DX11\imgui_impl_dx11.h" />
     <ClInclude Include="..\DearImGui\imconfig.h" />
     <ClInclude Include="..\DearImGui\imgui.h" />
     <ClInclude Include="..\DearImGui\imgui_internal.h" />
+    <ClInclude Include="..\DearImGui\imgui_user.h" />
     <ClInclude Include="..\DearImGui\stb_rect_pack.h" />
     <ClInclude Include="..\DearImGui\stb_textedit.h" />
     <ClInclude Include="..\DearImGui\stb_truetype.h" />
@@ -234,6 +247,7 @@
     <ClInclude Include="..\FMOD\inc\fmod_dsp_effects.h" />
     <ClInclude Include="..\FMOD\inc\fmod_errors.h" />
     <ClInclude Include="..\FMOD\inc\fmod_output.h" />
+    <ClInclude Include="Angle.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Equation.h" />
     <ClInclude Include="FmodSystem.h" />
@@ -241,6 +255,8 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="PolarForm.h" />
     <ClInclude Include="SoundStream.h" />
+    <ClInclude Include="Trigonometric.h" />
+    <ClInclude Include="Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

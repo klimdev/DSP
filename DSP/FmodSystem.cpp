@@ -1,8 +1,16 @@
 #include "FmodSystem.h"
 
+#include <utility>
 #include "Common.h"
 
-FmodSystemClass FmodSystem;
+const FmodSystemClass& FmodSystem = FmodSystemClass::singleton();
+
+FmodSystemClass FmodSystemClass::singletonInstance;
+
+const FmodSystemClass& FmodSystemClass::singleton()
+{
+	return singletonInstance;
+}
 
 FmodSystemClass::FmodSystemClass()
 {

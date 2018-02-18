@@ -1,7 +1,26 @@
 #include "SoundStream.h"
 
+#include <cstring> // memset
 #include "Common.h"
 #include "FmodSystem.h"
+
+FMOD_RESULT F_CALLBACK FMOD_SoundStreamReadCallBack(FMOD_SOUND *sound, void *data, unsigned int datalen)
+{
+	FMOD::Sound* pSound = reinterpret_cast<FMOD::Sound*>(sound);
+	void** pUserData = nullptr;
+	FMOD_CHECK(pSound->getUserData(pUserData));
+	SoundStream* pSoundStream = reinterpret_cast<SoundStream*>(*pUserData);
+	return pSoundStream->StreamReadCallback(data, datalen);
+}
+
+FMOD_RESULT F_CALLBACK FMOD_SoundStreamSetPosCallBack(FMOD_SOUND *sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype)
+{
+	FMOD::Sound* pSound = reinterpret_cast<FMOD::Sound*>(sound);
+	void** pUserData = nullptr;
+	FMOD_CHECK(pSound->getUserData(pUserData));
+	SoundStream* pSoundStream = reinterpret_cast<SoundStream*>(*pUserData);
+	return pSoundStream->StreamSetPosCallback(subsound, position, postype);
+}
 
 SoundStream::SoundStream()
 {
@@ -13,15 +32,17 @@ SoundStream::SoundStream()
 	
 	//Create and play the sound.
 	
-	memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+	std::memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
 	exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);  // Required.
 	exinfo.numchannels = 2;                               // Number of channels in the sound. 
 	exinfo.defaultfrequency = 44100;                           // Default playback rate of sound. 
 	exinfo.decodebuffersize = 44100;                           // Chunk size of stream update in samples. This will be the amount of data passed to the user callback. 
 	exinfo.length = exinfo.defaultfrequency * exinfo.numchannels * sizeof(signed short) * 5; // Length of PCM data in bytes of whole song (for Sound::getLength) 
 	exinfo.format = FMOD_SOUND_FORMAT_PCM16;         // Data format of sound. 
-	exinfo.pcmreadcallback = this->StreamReadCallback;                 // User callback for reading. 
-	exinfo.pcmsetposcallback = this->StreamSetPosCallback;               // User callback for seeking. 
+
+	exinfo.userdata = this;
+	exinfo.pcmreadcallback = FMOD_SoundStreamReadCallBack;                 // User callback for reading. 
+	exinfo.pcmsetposcallback = FMOD_SoundStreamSetPosCallBack;               // User callback for seeking. 
 
 	FMOD_CHECK(FmodSystem()->createSound(0, mode, &exinfo, &pSound));
 }
@@ -33,34 +54,6 @@ SoundStream::~SoundStream()
 
 	FMOD_CHECK(pSound->release());
 }
-
-void SoundStream::BeginDraw()
-{
-	// small section (line(?) on whatever window it's on)
-}
-
-void SoundStream::InnerDraw()
-{
-	//button
-	//if play -> pause button
-	//else play button
-
-	//stop button
-
-	//if play checked
-		//result = system->playSound(sound, 0, 0, &channel);
-	//if paused checked
-		//pause sound
-	//if stop checked
-		//stop sound
-
-}
-
-void SoundStream::EndDraw()
-{
-	//done
-}
-
 
 
 //demo

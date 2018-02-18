@@ -157,6 +157,8 @@ int main(int, char**)
 		bool demo = false;
 		MainMenu test;
 
+		PolarForm pf;
+
     // Main loop
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
@@ -174,18 +176,19 @@ int main(int, char**)
         }
         ImGui_ImplDX11_NewFrame();
 
-				//if (!demo)
+				if (!demo)
 				{
 
 					test.BeginDraw();
 					test.InnerDraw();
 					test.EndDraw();
 
-					PolarForm pf;
+
+					pf.BeginDraw();
 					pf.InnerDraw();
 
 				}
-				//else
+				else
 				{
 
         // 1. Show a simple window.

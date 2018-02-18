@@ -34,6 +34,9 @@
     <Filter Include="Base\FmodSound">
       <UniqueIdentifier>{b1b75dcf-61be-43dc-9148-4dd4bbb030ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Base\ImGui">
+      <UniqueIdentifier>{59bf35f5-e7fa-49f4-8246-8bab2bf2cf4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\DearImGui\DX11\imgui_impl_dx11.cpp">
@@ -66,6 +69,15 @@
     <ClCompile Include="Equation.cpp">
       <Filter>Base</Filter>
     </ClCompile>
+    <ClCompile Include="Trigonometric.cpp">
+      <Filter>Base\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>Base\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Angle.cpp">
+      <Filter>Base\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DearImGui\imconfig.h">
@@ -75,9 +87,6 @@
       <Filter>ImGui\DX11</Filter>
     </ClInclude>
     <ClInclude Include="PolarForm.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiBase.h">
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
@@ -133,6 +142,21 @@
     </ClInclude>
     <ClInclude Include="Equation.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiBase.h">
+      <Filter>Base\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Trigonometric.h">
+      <Filter>Base\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Base\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\DearImGui\imgui_user.h">
+      <Filter>ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="Angle.h">
+      <Filter>Base\Math</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
