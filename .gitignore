@@ -6,3 +6,8 @@
 *.ilk
 *.exe
 *.user
+x64/
+Debug/
+DSP/x64/
+DSP/Debug/
+.vs/
