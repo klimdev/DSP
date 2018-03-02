@@ -1,7 +1,9 @@
 #include "PolarForm.h"
 
-PolarForm::PolarForm(double r, const Angle & radianW) : r(r), w(radianW.Radian()) { }
-PolarForm::PolarForm(double r, double radianW) : r(r), w(radianW) { }
+int PolarForm::generatedID = 0;
+
+PolarForm::PolarForm(double r, const Angle & radianW) : r(r), w(radianW.Radian()) { Init(); }
+PolarForm::PolarForm(double r, double radianW) : r(r), w(radianW) { Init(); }
 
 PolarForm::~PolarForm()
 {
@@ -53,7 +55,8 @@ void PolarForm::BeginDraw()
 {
 	// window
 	ImGui::SetNextWindowCollapsed(!m_windowOpened);
-	m_windowOpened = ImGui::Begin("test");
+	sprintf_s(m_windowName, "PolarForm##%d", m_id);
+	m_windowOpened = ImGui::Begin(m_windowName);
 }
 
 void PolarForm::InnerDraw()
@@ -71,9 +74,9 @@ void PolarForm::InnerDraw()
 				static bool animate = true;
 				ImGui::Checkbox("Animate", &animate);
 
-				static float r = 1;
-				static float theta = 0;
-				static float delta = 0.1;
+				float &r = Variable("r", 1.0f);
+				float &theta = Variable("theta", 0.0f);
+				float &delta = Variable("delta", 0.1f);
 
 
 				ImGui::SliderFloat("r", &r, 0, 2);
@@ -94,22 +97,31 @@ void PolarForm::InnerDraw()
 				std::complex<double> c(0, theta * 0.0174533);
 				auto result = std::exp(c);
 
-				auto pos = ImGui::GetCursorScreenPos();
+				float &zoom = Variable("zoom", 25.0f);
+				
+				ImGui::InputFloat("zoom", &zoom);
+
+				Vector2 pos = ImGui::GetCursorScreenPos();
 
 				static ImVec2 size(50, 50);
 				static ImVec2 center(25, 25);
 				auto left_top = ImGui::GetWindowContentRegionMin();
 				auto right_bottom = ImGui::GetWindowContentRegionMax();
 
-				pos.x += size.x;
-				pos.y += size.y;
+				pos += r*zoom;
 
-				draw_list->AddCircle(pos, 50, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
+				draw_list->AddCircle(pos, r*zoom, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
 
 				auto target = pos;
-				target.x += 50 * result.real();
-				target.y -= 50 * result.imag();
+				target.x += r * zoom * result.real();
+				target.y -= r * zoom * result.imag();
 				draw_list->AddCircleFilled(target, 3, ImGui::ColorConvertFloat4ToU32(ImVec4(0, 1, 0, 1)));
+
+				pos += r * zoom;
+				pos.x -= 2 * r * zoom;
+
+				ImGui::SetCursorScreenPos(pos);
+
 
 			}
 		}

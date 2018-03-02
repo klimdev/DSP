@@ -78,6 +78,9 @@
     <ClCompile Include="Angle.cpp">
       <Filter>Base\Math</Filter>
     </ClCompile>
+    <ClCompile Include="ImGuiVariable.cpp">
+      <Filter>Base\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DearImGui\imconfig.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="Angle.h">
       <Filter>Base\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiVariable.h">
+      <Filter>Base\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
 class PolarForm : public ImGuiBase
 {
 public:
-	PolarForm() { };
+	PolarForm() { Init(); };
 	PolarForm(double r, const Angle& radianW);
 	PolarForm(double r, double radianW);
 	virtual ~PolarForm();
@@ -50,7 +50,14 @@ protected:
 	bool m_windowMode = false;
 	bool m_windowOpened = false;
 
+private:
+	inline void Init() 
+	{ 
+		m_id = ++generatedID; 
+	};
 
+	int m_id = 0;
+	static int generatedID;
 };
 
 // Vector

@@ -223,6 +223,7 @@
     <ClCompile Include="Angle.cpp" />
     <ClCompile Include="Equation.cpp" />
     <ClCompile Include="FmodSystem.cpp" />
+    <ClCompile Include="ImGuiVariable.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="PolarForm.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="Equation.h" />
     <ClInclude Include="FmodSystem.h" />
     <ClInclude Include="ImGuiBase.h" />
+    <ClInclude Include="ImGuiVariable.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="PolarForm.h" />
     <ClInclude Include="SoundStream.h" />
