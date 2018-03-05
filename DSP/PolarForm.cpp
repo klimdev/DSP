@@ -19,7 +19,7 @@ std::complex<double> PolarForm::Get(const Angle& offset)
 	return r * std::exp(std::complex<double>(0, w + offset.Radian()));
 }
 
-std::complex<double> PolarForm::GetReal(double r, const Angle & theta)
+double PolarForm::GetReal(double r, const Angle & theta)
 {
 	return r * std::exp(std::complex<double>(0, theta.Radian())).real();
 }
@@ -29,7 +29,7 @@ double PolarForm::GetReal(const Angle & offset)
 	return r * std::exp(std::complex<double>(0, w + offset.Radian())).real();
 }
 
-std::complex<double> PolarForm::GetImag(double r, const Angle & theta)
+double PolarForm::GetImag(double r, const Angle & theta)
 {
 	return r * std::exp(std::complex<double>(0, theta.Radian())).imag();
 }
@@ -76,10 +76,20 @@ void PolarForm::InnerDraw()
 
 				float &r = Variable("r", 1.0f);
 				float &theta = Variable("theta", 0.0f);
-				float &delta = Variable("delta", 0.1f);
+				float &delta = Variable("delta", 0.5f);
 
+				float bit = 1;
+				switch (m_soundInfo.format)
+				{
+				case FMOD_SOUND_FORMAT_PCM8: bit = 8.0f; break;
+					case FMOD_SOUND_FORMAT_PCM16: bit = 16.0f; break;
+					case FMOD_SOUND_FORMAT_PCM24: bit = 24.0f; break;
+					case FMOD_SOUND_FORMAT_PCM32: bit = 32.0f; break;
+					default: break;
+				}
 
-				ImGui::SliderFloat("r", &r, 0, 2);
+				float MAX_R = std::pow(2.0f, bit);
+				ImGui::SliderFloat("r", &r, FLT_MIN, MAX_R);
 				ImGui::SliderFloat("theta", &theta, -1, 361);
 				ImGui::SliderFloat("delta", &delta, -1, 1);
 				if (animate)
@@ -97,28 +107,29 @@ void PolarForm::InnerDraw()
 				std::complex<double> c(0, theta * 0.0174533);
 				auto result = std::exp(c);
 
-				float &zoom = Variable("zoom", 25.0f);
+				float &zoom = Variable("zoom", 50.0f);
 				
 				ImGui::InputFloat("zoom", &zoom);
 
 				Vector2 pos = ImGui::GetCursorScreenPos();
 
-				static ImVec2 size(50, 50);
-				static ImVec2 center(25, 25);
 				auto left_top = ImGui::GetWindowContentRegionMin();
 				auto right_bottom = ImGui::GetWindowContentRegionMax();
 
-				pos += r*zoom;
 
-				draw_list->AddCircle(pos, r*zoom, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
+				float proportionalR = zoom * std::log2((r + MAX_R) / MAX_R);
+
+				pos += zoom;
+
+				draw_list->AddCircle(pos, proportionalR, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
 
 				auto target = pos;
-				target.x += r * zoom * result.real();
-				target.y -= r * zoom * result.imag();
+				target.x += proportionalR * result.real();
+				target.y -= proportionalR * result.imag();
 				draw_list->AddCircleFilled(target, 3, ImGui::ColorConvertFloat4ToU32(ImVec4(0, 1, 0, 1)));
 
-				pos += r * zoom;
-				pos.x -= 2 * r * zoom;
+				pos += proportionalR;
+				pos.x -= proportionalR + zoom;
 
 				ImGui::SetCursorScreenPos(pos);
 
@@ -141,4 +152,41 @@ void PolarForm::InnerDraw()
 void PolarForm::EndDraw()
 {
 	// window
+}
+
+FMOD_RESULT PolarForm::StreamReadCallback(void *pData, unsigned int datalen)
+{
+	signed short *pBuffer = (signed short *)pData;
+	unsigned int len = datalen / m_soundInfo.numchannels;
+
+	float theta = Variable<float>("theta");
+	float delta = Variable<float>("delta");
+
+	for (unsigned int count = 0; count < (datalen >> 2); count++)     // >>2 = 16bit stereo (4 bytes per sample)
+	{
+	  double sinT = GetImag(FromDegree(theta));
+		for (int channel = 0; channel < m_soundInfo.numchannels ; ++channel)
+		{
+			*pBuffer++ = (signed short)(sinT);    // bit for channel
+		}
+	}
+
+	//	static float  t1 = 0, t2 = 0;        // time
+	//	static float  v1 = 0, v2 = 0;        // velocity
+	//	signed short *stereo16bitbuffer = (signed short *)data;
+	//
+	//	for (unsigned int count = 0; count < (datalen >> 2); count++)     // >>2 = 16bit stereo (4 bytes per sample)
+	//	{
+	//		*stereo16bitbuffer++ = (signed short)(Common_Sin(t1) * 32767.0f);    // left channel
+	//		*stereo16bitbuffer++ = (signed short)(Common_Sin(t2) * 32767.0f);    // right channel
+	//
+	//		t1 += 0.01f + v1;
+	//		t2 += 0.0142f + v2;
+	//		v1 += (float)(Common_Sin(t1) * 0.002f);
+	//		v2 += (float)(Common_Sin(t2) * 0.002f);
+	//	}
+	//
+	//	return FMOD_OK;
+
+	return FMOD_OK;
 }

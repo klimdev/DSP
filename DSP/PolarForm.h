@@ -3,12 +3,14 @@
 #include <complex>
 #include <vector>
 #include "ImGuiBase.h"
+#include "SoundStream.h"
+
 #include "Angle.h"
 
 // cos
 // sin
 
-class PolarForm : public ImGuiBase
+class PolarForm : public ImGuiBase, public SoundStream
 {
 public:
 	PolarForm() { Init(); };
@@ -24,10 +26,10 @@ public:
 	static std::complex<double> Get(double r, const Angle& theta);
 	std::complex<double> Get(const Angle& offset);
 	//get real(theta)
-	static std::complex<double> GetReal(double r, const Angle& theta);
+	static double GetReal(double r, const Angle& theta);
 	double GetReal(const Angle& offset);
 	//get img(theta)
-	static std::complex<double> GetImag(double r, const Angle& theta);
+	static double GetImag(double r, const Angle& theta);
 	double GetImag(const Angle& offset);
 
 	//operator^ double
@@ -50,6 +52,13 @@ protected:
 	bool m_windowMode = false;
 	bool m_windowOpened = false;
 
+
+protected:
+	////
+	// Inherited via SoundStream
+	virtual FMOD_RESULT StreamReadCallback(void *pData, unsigned int datalen) override;
+	////
+
 private:
 	inline void Init() 
 	{ 
@@ -58,6 +67,8 @@ private:
 
 	int m_id = 0;
 	static int generatedID;
+
+
 };
 
 // Vector

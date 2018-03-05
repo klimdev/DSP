@@ -7,52 +7,123 @@
 FMOD_RESULT F_CALLBACK FMOD_SoundStreamReadCallBack(FMOD_SOUND *sound, void *data, unsigned int datalen)
 {
 	FMOD::Sound* pSound = reinterpret_cast<FMOD::Sound*>(sound);
-	void** pUserData = nullptr;
-	FMOD_CHECK(pSound->getUserData(pUserData));
-	SoundStream* pSoundStream = reinterpret_cast<SoundStream*>(*pUserData);
-	return pSoundStream->StreamReadCallback(data, datalen);
+	void* pUserData = nullptr;
+	FMOD_CHECK(pSound->getUserData(&pUserData));
+	SoundStream* pSoundStream = reinterpret_cast<SoundStream*>(pUserData);
+	return pSoundStream->IsPlaying() ? pSoundStream->StreamReadCallback(data, datalen) : FMOD_OK;
 }
 
 FMOD_RESULT F_CALLBACK FMOD_SoundStreamSetPosCallBack(FMOD_SOUND *sound, int subsound, unsigned int position, FMOD_TIMEUNIT postype)
 {
 	FMOD::Sound* pSound = reinterpret_cast<FMOD::Sound*>(sound);
-	void** pUserData = nullptr;
-	FMOD_CHECK(pSound->getUserData(pUserData));
-	SoundStream* pSoundStream = reinterpret_cast<SoundStream*>(*pUserData);
-	return pSoundStream->StreamSetPosCallback(subsound, position, postype);
+	void* pUserData = nullptr;
+	FMOD_CHECK(pSound->getUserData(&pUserData));
+	SoundStream* pSoundStream = reinterpret_cast<SoundStream*>(pUserData);
+	return pSoundStream->IsPlaying() ? pSoundStream->StreamSetPosCallback(subsound, position, postype) : FMOD_OK;
 }
 
 SoundStream::SoundStream()
 {
-
 	// setting for steaming sound for my data
-	FMOD_MODE               mode = FMOD_LOOP_NORMAL | FMOD_2D | FMOD_CREATESTREAM | FMOD_OPENUSER | FMOD_OPENMEMORY_POINT;
-
-	FMOD_CREATESOUNDEXINFO  exinfo;
+	FMOD_MODE               mode = FMOD_LOOP_NORMAL | FMOD_2D | FMOD_CREATESTREAM | FMOD_OPENUSER;
 	
-	//Create and play the sound.
-	
-	std::memset(&exinfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
-	exinfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);  // Required.
-	exinfo.numchannels = 2;                               // Number of channels in the sound. 
-	exinfo.defaultfrequency = 44100;                           // Default playback rate of sound. 
-	exinfo.decodebuffersize = 44100;                           // Chunk size of stream update in samples. This will be the amount of data passed to the user callback. 
-	exinfo.length = exinfo.defaultfrequency * exinfo.numchannels * sizeof(signed short) * 5; // Length of PCM data in bytes of whole song (for Sound::getLength) 
-	exinfo.format = FMOD_SOUND_FORMAT_PCM16;         // Data format of sound. 
+	//Create the sound.
+	std::memset(&m_soundInfo, 0, sizeof(FMOD_CREATESOUNDEXINFO));
+	m_soundInfo.cbsize = sizeof(FMOD_CREATESOUNDEXINFO);  // Required.
+	m_soundInfo.numchannels = 2;                               // Number of channels in the sound. 
+	m_soundInfo.defaultfrequency = 44100;                           // Default playback rate of sound. 
+	m_soundInfo.decodebuffersize = 44100;                           // Chunk size of stream update in samples. This will be the amount of data passed to the user callback. 
+	m_soundInfo.length = m_soundInfo.defaultfrequency * m_soundInfo.numchannels * sizeof(signed short) * 5; // Length of PCM data in bytes of whole song (for Sound::getLength) 
+	m_soundInfo.format = FMOD_SOUND_FORMAT_PCM16;         // Data format of sound. 
 
-	exinfo.userdata = this;
-	exinfo.pcmreadcallback = FMOD_SoundStreamReadCallBack;                 // User callback for reading. 
-	exinfo.pcmsetposcallback = FMOD_SoundStreamSetPosCallBack;               // User callback for seeking. 
-
-	FMOD_CHECK(FmodSystem()->createSound(0, mode, &exinfo, &pSound));
+	m_soundInfo.userdata = this;
+	m_soundInfo.pcmreadcallback = FMOD_SoundStreamReadCallBack;                 // User callback for reading. 
+	m_soundInfo.pcmsetposcallback = FMOD_SoundStreamSetPosCallBack;               // User callback for seeking. 
+	FMOD_CHECK(FmodSystem()->createSound(0, mode, &m_soundInfo, &m_pSound));
 }
 
 
 SoundStream::~SoundStream()
 {
 	//stop sound
+	StopStream();
+	FMOD_CHECK(m_pSound->release());
+}
 
-	FMOD_CHECK(pSound->release());
+FMOD_RESULT SoundStream::StreamSetPosCallback(int subsound, unsigned int position, FMOD_TIMEUNIT postype)
+{
+	return FMOD_OK;
+}
+
+void SoundStream::PlayStream()
+{
+	FMOD_CHECK(FmodSystem()->playSound(m_pSound, 0, m_pause, &m_pChannel));
+}
+
+void SoundStream::PauseStream()
+{
+	if (m_pChannel != nullptr)
+	{
+		bool playing = false;
+		FMOD_CHECK(m_pChannel->isPlaying(&playing));
+		if (playing)
+		{
+			m_pause = true;
+			FMOD_CHECK(m_pChannel->setPaused(m_pause));
+		}
+		else
+			m_pChannel = nullptr;
+	}
+}
+
+void SoundStream::ResumeStream()
+{
+	if (m_pChannel != nullptr)
+	{
+		bool playing = false;
+		FMOD_CHECK(m_pChannel->isPlaying(&playing));
+		if (playing)
+		{
+			m_pause = false;
+			FMOD_CHECK(m_pChannel->setPaused(m_pause));
+		}
+		else
+			m_pChannel = nullptr;
+	}
+}
+
+void SoundStream::ToggleStream()
+{
+	if (m_pChannel != nullptr)
+	{
+		bool playing = false;
+		FMOD_CHECK(m_pChannel->isPlaying(&playing));
+		if (playing)
+		{
+			FMOD_CHECK(m_pChannel->getPaused(&m_pause));
+			m_pause = !m_pause;
+			FMOD_CHECK(m_pChannel->setPaused(m_pause));
+		}
+		else
+			m_pChannel = nullptr;
+	}
+}
+
+void SoundStream::StopStream()
+{
+	if (m_pChannel != nullptr)
+	{
+		FMOD_CHECK(m_pChannel->stop());
+		m_pChannel = nullptr;
+	}
+}
+
+bool SoundStream::IsPlaying()
+{
+	bool playing = false;
+	if (m_pChannel != nullptr)
+		FMOD_CHECK(m_pChannel->isPlaying(&playing));
+	return playing;
 }
 
 
