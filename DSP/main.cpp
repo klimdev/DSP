@@ -7,6 +7,8 @@
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <tchar.h>
+#include <chrono>
+#include <thread>
 
 #include "Menu.h"
 #include "PolarForm.h"
@@ -160,76 +162,87 @@ int main(int, char**)
 		PolarForm pf;
 
     // Main loop
+		std::chrono::system_clock::time_point frameStart, frameEnd;
+		std::chrono::duration<double, std::milli> frameRate = std::chrono::milliseconds(16);
+		std::chrono::duration<double, std::milli> fp_ms;
     MSG msg;
     ZeroMemory(&msg, sizeof(msg));
     while (msg.message != WM_QUIT)
     {
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-        if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
-        {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-            continue;
-        }
-        ImGui_ImplDX11_NewFrame();
+			frameStart = std::chrono::system_clock::now();
 
-				if (!demo)
+      // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+      // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application.
+      // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application.
+      // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+      if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE))
+      {
+          TranslateMessage(&msg);
+          DispatchMessage(&msg);
+          continue;
+      }
+      ImGui_ImplDX11_NewFrame();
+
+			if (!demo)
+			{
+
+				test.BeginDraw();
+				test.InnerDraw();
+				test.EndDraw();
+
+
+				pf.BeginDraw();
+				pf.InnerDraw();
+
+			}
+			else
+			{
+
+				// 1. Show a simple window.
+				// Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
 				{
-
-					test.BeginDraw();
-					test.InnerDraw();
-					test.EndDraw();
-
-
-					pf.BeginDraw();
-					pf.InnerDraw();
-
-				}
-				else
-				{
-
-        // 1. Show a simple window.
-        // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets automatically appears in a window called "Debug".
-        {
-            static float f = 0.0f;
-            ImGui::Text("Hello, world!");                           // Some text (you can use a format string too)
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float as a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats as a color
-            if (ImGui::Button("Demo Window"))                       // Use buttons to toggle our bools. We could use Checkbox() as well.
-                show_demo_window ^= 1;
-            if (ImGui::Button("Another Window"))
-                show_another_window ^= 1;
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        }
-
-        // 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name the window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);
-            ImGui::Text("Hello from another window!");
-            ImGui::End();
-        }
-
-        // 3. Show the ImGui demo window. Most of the sample code is in ImGui::ShowDemoWindow().
-        if (show_demo_window)
-        {
-            ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
-            ImGui::ShowDemoWindow(&show_demo_window);
-        }
-
+				    static float f = 0.0f;
+				    ImGui::Text("Hello, world!");                           // Some text (you can use a format string too)
+				    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float as a slider from 0.0f to 1.0f
+				    ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats as a color
+				    if (ImGui::Button("Demo Window"))                       // Use buttons to toggle our bools. We could use Checkbox() as well.
+				        show_demo_window ^= 1;
+				    if (ImGui::Button("Another Window"))
+				        show_another_window ^= 1;
+				    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 				}
 
+				// 2. Show another simple window. In most cases you will use an explicit Begin/End pair to name the window.
+				if (show_another_window)
+				{
+				    ImGui::Begin("Another Window", &show_another_window);
+				    ImGui::Text("Hello from another window!");
+				    ImGui::End();
+				}
 
-        // Rendering
-        g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
-        g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, (float*)&clear_color);
-        ImGui::Render();
+				// 3. Show the ImGui demo window. Most of the sample code is in ImGui::ShowDemoWindow().
+				if (show_demo_window)
+				{
+				    ImGui::SetNextWindowPos(ImVec2(650, 20), ImGuiCond_FirstUseEver); // Normally user code doesn't need/want to call this because positions are saved in .ini file anyway. Here we just want to make the demo initial state a bit more friendly!
+				    ImGui::ShowDemoWindow(&show_demo_window);
+				}
 
-        g_pSwapChain->Present(1, 0); // Present with vsync
-        //g_pSwapChain->Present(0, 0); // Present without vsync
+			}
+			
+			frameEnd = std::chrono::system_clock::now();
+			fp_ms = frameEnd - frameStart;
+			if (fp_ms < frameRate)
+				std::this_thread::sleep_for(frameRate - fp_ms);
+
+      // Rendering
+      g_pd3dDeviceContext->OMSetRenderTargets(1, &g_mainRenderTargetView, NULL);
+      g_pd3dDeviceContext->ClearRenderTargetView(g_mainRenderTargetView, (float*)&clear_color);
+      ImGui::Render();
+
+      //g_pSwapChain->Present(1, 0); // Present with vsync
+      g_pSwapChain->Present(0, 0); // Present without vsync
+
+
     }
 
     ImGui_ImplDX11_Shutdown();
