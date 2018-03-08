@@ -46,8 +46,8 @@ public:
 	virtual void EndDraw() override;
 
 protected:
-	double r = 1; // radius
-	double w = 1; // angular speed
+	double m_r = 1; // radius
+	double m_w = 1; // angular speed
 
 	bool m_windowMode = false;
 	bool m_windowOpened = false;

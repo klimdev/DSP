@@ -2,8 +2,8 @@
 
 int PolarForm::generatedID = 0;
 
-PolarForm::PolarForm(double r, const Angle & radianW) : r(r), w(radianW.Radian()) { Init(); }
-PolarForm::PolarForm(double r, double radianW) : r(r), w(radianW) { Init(); }
+PolarForm::PolarForm(double r, const Angle & radianW) : m_r(r), m_w(radianW.Radian()) { Init(); }
+PolarForm::PolarForm(double r, double radianW) : m_r(r), m_w(radianW) { Init(); }
 
 PolarForm::~PolarForm()
 {
@@ -16,7 +16,7 @@ std::complex<double> PolarForm::Get(double r, const Angle & theta)
 
 std::complex<double> PolarForm::Get(const Angle& offset)
 {
-	return r * std::exp(std::complex<double>(0, w + offset.Radian()));
+	return m_r * std::exp(std::complex<double>(0, m_w + offset.Radian()));
 }
 
 double PolarForm::GetReal(double r, const Angle & theta)
@@ -26,7 +26,7 @@ double PolarForm::GetReal(double r, const Angle & theta)
 
 double PolarForm::GetReal(const Angle & offset)
 {
-	return r * std::exp(std::complex<double>(0, w + offset.Radian())).real();
+	return m_r * std::exp(std::complex<double>(0, m_w + offset.Radian())).real();
 }
 
 double PolarForm::GetImag(double r, const Angle & theta)
@@ -36,18 +36,18 @@ double PolarForm::GetImag(double r, const Angle & theta)
 
 double PolarForm::GetImag(const Angle & offset)
 {
-	return r * std::exp(std::complex<double>(0, w + offset.Radian())).imag();
+	return m_r * std::exp(std::complex<double>(0, m_w + offset.Radian())).imag();
 }
 
 PolarForm PolarForm::operator^(double power) const
 {
-	return PolarForm(std::pow(r, power), w * power);
+	return PolarForm(std::pow(m_r, power), m_w * power);
 }
 
 PolarForm & PolarForm::operator^=(double power)
 {
-	r = std::pow(r, power);
-	w *= power;
+	m_r = std::pow(m_r, power);
+	m_w *= power;
 	return *this;
 }
 
@@ -62,82 +62,91 @@ void PolarForm::BeginDraw()
 void PolarForm::InnerDraw()
 {
 	if(m_windowOpened)
-	//if (ImGui::Begin("PolarFormTest"))
 	{
-		//m_windowMode = !ImGui::IsWindowCollapsed();
-			
-		//if (m_windowMode)
+		bool isPlaying = Variable("play", false);
+		ImGui::Checkbox("PlaySound", &Variable<bool>("play"));
+		ImGui::Separator();
+		if (isPlaying != Variable<bool>("play"))
 		{
-			ImDrawList* draw_list = ImGui::GetWindowDrawList();
-			if (draw_list)
-			{
-				static bool animate = true;
-				ImGui::Checkbox("Animate", &animate);
+			if (isPlaying)
+				StopStream();
+			else
+				PlayStream();
+		}
 
-				float &r = Variable("r", 1.0f);
-				float &theta = Variable("theta", 0.0f);
-				float &delta = Variable("delta", 0.5f);
+		float &r = Variable("r", 1.0f);
+		float &period = Variable("period", 1.0f/256.0f/*c tone*/);
 
-				float bit = 1;
-				switch (m_soundInfo.format)
-				{
-				case FMOD_SOUND_FORMAT_PCM8: bit = 8.0f; break;
-					case FMOD_SOUND_FORMAT_PCM16: bit = 16.0f; break;
-					case FMOD_SOUND_FORMAT_PCM24: bit = 24.0f; break;
-					case FMOD_SOUND_FORMAT_PCM32: bit = 32.0f; break;
-					default: break;
-				}
+		float bit = 1;
+		switch (m_soundInfo.format)
+		{
+		case FMOD_SOUND_FORMAT_PCM8: bit = 7.0f; break;
+		case FMOD_SOUND_FORMAT_PCM16: bit = 15.0f; break;
+		case FMOD_SOUND_FORMAT_PCM24: bit = 23.0f; break;
+		case FMOD_SOUND_FORMAT_PCM32: bit = 31.0f; break;
+		default: break;
+		}
 
-				float MAX_R = std::pow(2.0f, bit);
-				ImGui::SliderFloat("r", &r, FLT_MIN, MAX_R);
-				ImGui::SliderFloat("theta", &theta, -1, 361);
-				ImGui::SliderFloat("delta", &delta, -1, 1);
-				if (animate)
-				{
-					theta += delta;
-				}
-				if (theta < 0)
-				{
-					theta = 360;
-				}
-				if (theta > 360)
-				{
-					theta = 0;
-				}
-				std::complex<double> c(0, theta * 0.0174533);
-				auto result = std::exp(c);
+		float MAX_R = std::pow(2.0f, bit) -1;
+		ImGui::SliderFloat("r", &r, FLT_MIN, MAX_R);
+		m_r = r;
+		ImGui::Separator();
+		ImGui::InputFloat("period", &period, 0.1f, 1.0f);
+		float frequency = 1 / period;
+		ImGui::InputFloat("frequency", &frequency, 0.1f, 1.0f);
+		period = 1 / frequency;
 
-				float &zoom = Variable("zoom", 50.0f);
-				
-				ImGui::InputFloat("zoom", &zoom);
+		ImGui::Separator();
+		// animation
+		// n period per 1sec
+		// 1 / n*period
+		float theta = Variable("theta_animation", 0.0f);
+		ImGui::SliderFloat("theta", &theta, -1, 361);
+		if (theta < 0)
+		{
+			theta = 360;
+		}
+		if (theta > 360)
+		{
+			theta = 0;
+		}
+		std::complex<double> c(0, theta * 0.0174533);
+		auto result = std::exp(c);
 
-				Vector2 pos = ImGui::GetCursorScreenPos();
+		float &zoom = Variable("zoom", 50.0f);
 
-				auto left_top = ImGui::GetWindowContentRegionMin();
-				auto right_bottom = ImGui::GetWindowContentRegionMax();
+		ImGui::InputFloat("zoom", &zoom);
 
+		ImDrawList* draw_list = ImGui::GetWindowDrawList();
+		if (draw_list)
+		{
+			
+			Vector2 pos = ImGui::GetCursorScreenPos();
 
-				float proportionalR = zoom * std::log2((r + MAX_R) / MAX_R);
-
-				pos += zoom;
-
-				draw_list->AddCircle(pos, proportionalR, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
-
-				auto target = pos;
-				target.x += proportionalR * result.real();
-				target.y -= proportionalR * result.imag();
-				draw_list->AddCircleFilled(target, 3, ImGui::ColorConvertFloat4ToU32(ImVec4(0, 1, 0, 1)));
-
-				pos += proportionalR;
-				pos.x -= proportionalR + zoom;
-
-				ImGui::SetCursorScreenPos(pos);
+			auto left_top = ImGui::GetWindowContentRegionMin();
+			auto right_bottom = ImGui::GetWindowContentRegionMax();
 
 
-			}
+			float proportionalR = zoom;
+			//float proportionalR = zoom * std::log2((r + MAX_R) / MAX_R);
+
+			pos += zoom;
+
+			draw_list->AddCircle(pos, proportionalR, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
+
+			auto target = pos;
+			target.x += proportionalR * result.real();
+			target.y -= proportionalR * result.imag();
+			draw_list->AddCircleFilled(target, 3, ImGui::ColorConvertFloat4ToU32(ImVec4(0, 1, 0, 1)));
+
+			pos += proportionalR;
+			pos.x -= proportionalR + zoom;
+
+			ImGui::SetCursorScreenPos(pos);
+
 		}
 	}
-		ImGui::End();
+	ImGui::End();
 	// slide bar for theta
 	// slide for factor
 	// check for auto play
@@ -157,18 +166,23 @@ void PolarForm::EndDraw()
 FMOD_RESULT PolarForm::StreamReadCallback(void *pData, unsigned int datalen)
 {
 	signed short *pBuffer = (signed short *)pData;
-	unsigned int len = datalen / m_soundInfo.numchannels;
+	unsigned int len = datalen / (m_soundInfo.numchannels * sizeof(signed short));
 
-	float theta = Variable<float>("theta");
-	float delta = Variable<float>("delta");
+	float &theta = Variable("theta", 0.0f);
+	// 360 in 1sec = sampling rate 44100 in 1sec
+	// per sample = 360degree / 44100sample = 0.00816326530612244897959183673469 angle per sample
+	// 360 in Nsec = sampling rate 44100 in 1sec
+	// per sample = 360degree / (44100sample*N) = 0.00816326530612244897959183673469 / N angle per sample
+	double delta = 0.00816326530612244897959183673469 / Variable<float>("period");
 
-	for (unsigned int count = 0; count < (datalen >> 2); count++)     // >>2 = 16bit stereo (4 bytes per sample)
+	for (unsigned int count = 0; count < len; count++)     // >>2 = 16bit stereo (4 bytes per sample)
 	{
 	  double sinT = GetImag(FromDegree(theta));
 		for (int channel = 0; channel < m_soundInfo.numchannels ; ++channel)
 		{
 			*pBuffer++ = (signed short)(sinT);    // bit for channel
 		}
+		theta += delta;
 	}
 
 	//	static float  t1 = 0, t2 = 0;        // time
