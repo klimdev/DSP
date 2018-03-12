@@ -135,8 +135,8 @@ void PolarForm::InnerDraw()
 			draw_list->AddCircle(pos, proportionalR, ImGui::ColorConvertFloat4ToU32(ImVec4(1, 1, 1, 1)), 30);
 
 			auto target = pos;
-			target.x += proportionalR * result.real();
-			target.y -= proportionalR * result.imag();
+			target.x += proportionalR * float(result.real());
+			target.y -= proportionalR * float(result.imag());
 			draw_list->AddCircleFilled(target, 3, ImGui::ColorConvertFloat4ToU32(ImVec4(0, 1, 0, 1)));
 
 			pos += proportionalR;
@@ -173,7 +173,7 @@ FMOD_RESULT PolarForm::StreamReadCallback(void *pData, unsigned int datalen)
 	// per sample = 360degree / 44100sample = 0.00816326530612244897959183673469 angle per sample
 	// 360 in Nsec = sampling rate 44100 in 1sec
 	// per sample = 360degree / (44100sample*N) = 0.00816326530612244897959183673469 / N angle per sample
-	double delta = 0.00816326530612244897959183673469 / Variable<float>("period");
+	float delta = 0.00816326530612244897959183673469f / Variable<float>("period");
 
 	for (unsigned int count = 0; count < len; count++)     // >>2 = 16bit stereo (4 bytes per sample)
 	{

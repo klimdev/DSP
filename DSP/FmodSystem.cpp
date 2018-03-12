@@ -17,7 +17,6 @@ FmodSystemClass::FmodSystemClass()
 	/*
 	Create a System object and initialize.
 	*/
-	FMOD_RESULT             result;
 	unsigned int            version;
 	void                   *extradriverdata = 0;
 
