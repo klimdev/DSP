@@ -25,14 +25,13 @@ private:
 public:
 	virtual ~ImGuiVarialbeUser()
 	{
-		ImGuiVariableNameMap& map = m_instanceVariableContainer[this];
+		ImGuiVariableNameMap& map = m_instanceVariableContainer;
 		ImGuiVariableNameMap::iterator iterator = map.begin();
 		while (iterator != map.end())
 		{
 			delete iterator->second;
 			++iterator;
 		}
-		m_instanceVariableContainer.erase(this);
 	}
 
 	template<typename T>
@@ -43,7 +42,7 @@ public:
 	template<typename T>
 	T& Variable(const std::string& name)
 	{
-		ImGuiVariableNameMap& map = m_instanceVariableContainer[this];
+		ImGuiVariableNameMap& map = m_instanceVariableContainer;
 		if (map.find(name) == map.end())
 			map[name] = new ImGuiVariable<T>();
 
@@ -58,7 +57,7 @@ public:
 	template<typename T>
 	T& Variable(const std::string& name, T defaultValue)
 	{
-		ImGuiVariableNameMap& map = m_instanceVariableContainer[this];
+		ImGuiVariableNameMap& map = m_instanceVariableContainer;
 		if (map.find(name) == map.end())
 			map[name] = new ImGuiVariable<T>(defaultValue);
 
@@ -95,6 +94,6 @@ public:
 
 private:
 	typedef std::unordered_map< std::string, ImGuiVariableBase* > ImGuiVariableNameMap;
-	static std::unordered_map<void*, ImGuiVariableNameMap> m_instanceVariableContainer;
+	ImGuiVariableNameMap m_instanceVariableContainer;
 	static ImGuiVariableNameMap m_globalVariableContrainer;
 };
