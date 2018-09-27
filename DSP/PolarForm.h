@@ -60,15 +60,6 @@ protected:
 	////
 
 private:
-	inline void Init() 
-	{ 
-		m_id = ++generatedID; 
-	};
-
-	int m_id = 0;
-	static int generatedID;
-
-
 };
 
 // Vector

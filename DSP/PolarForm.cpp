@@ -1,9 +1,7 @@
 #include "PolarForm.h"
 
-int PolarForm::generatedID = 0;
-
-PolarForm::PolarForm(double r, const Angle & radianW) : m_r(r), m_w(radianW.Radian()) { Init(); }
-PolarForm::PolarForm(double r, double radianW) : m_r(r), m_w(radianW) { Init(); }
+PolarForm::PolarForm(double r, const Angle & radianW) : m_r(r), m_w(radianW.Radian()) { }
+PolarForm::PolarForm(double r, double radianW) : m_r(r), m_w(radianW) { }
 
 PolarForm::~PolarForm()
 {
@@ -55,8 +53,7 @@ void PolarForm::BeginDraw()
 {
 	// window
 	ImGui::SetNextWindowCollapsed(!m_windowOpened);
-	sprintf_s(m_windowName, "PolarForm##%d", m_id);
-	m_windowOpened = ImGui::Begin(m_windowName);
+	m_windowOpened = ImGui::Begin(GetNamePerInstance("PolarForm"));
 }
 
 void PolarForm::InnerDraw()

@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <memory>
+#include <typeinfo>
 
 class ImGuiVarialbeUser
 {
@@ -34,6 +35,7 @@ public:
 		}
 	}
 
+#pragma region LocalVariable
 	template<typename T>
 	T& Variable(const char* name)
 	{
@@ -63,7 +65,41 @@ public:
 
 		return *reinterpret_cast<T*>(map[name]->Get());
 	}
+#pragma endregion
 
+#pragma region ClassVariable
+	template<typename T>
+	T& ClassVariable(const char* name)
+	{
+		return ClassVariable<T>(std::string(name));
+	}
+	template<typename T>
+	T& ClassVariable(const std::string& name)
+	{
+		ImGuiVariableNameMap& map = m_classVariableContainer[typeid(this).hash_code()];
+		if (map.find(name) == map.end())
+			map[name] = new ImGuiVariable<T>();
+
+		return *reinterpret_cast<T*>(map[name]->Get());
+	}
+
+	template<typename T>
+	T& ClassVariable(const char* name, T defaultValue)
+	{
+		return ClassVariable<T>(std::string(name), defaultValue);
+	}
+	template<typename T>
+	T& ClassVariable(const std::string& name, T defaultValue)
+	{
+		ImGuiVariableNameMap& map = m_classVariableContainer[typeid(this).hash_code()];
+		if (map.find(name) == map.end())
+			map[name] = new ImGuiVariable<T>(defaultValue);
+
+		return *reinterpret_cast<T*>(map[name]->Get());
+	}
+#pragma endregion
+
+#pragma region GlobalVariable
 	template<typename T>
 	T& GlobalVariable(const char* name)
 	{
@@ -72,10 +108,10 @@ public:
 	template<typename T>
 	T& GlobalVariable(const std::string& name)
 	{
-		if (m_globalVariableContrainer.find(name) == map.end())
-			m_globalVariableContrainer[name] = new ImGuiVariable<T>();
+		if (m_globalVariableContainer.find(name) == map.end())
+			m_globalVariableContainer[name] = new ImGuiVariable<T>();
 
-		return *reinterpret_cast<T*>(m_globalVariableContrainer[name]->Get())
+		return *reinterpret_cast<T*>(m_globalVariableContainer[name]->Get());
 	}
 
 	template<typename T>
@@ -86,14 +122,16 @@ public:
 	template<typename T>
 	T& GlobalVariable(const std::string& name, T defaultValue)
 	{
-		if (m_globalVariableContrainer.find(name) == map.end())
-			m_globalVariableContrainer[name] = new ImGuiVariable<T>(defaultValue);
+		if (m_globalVariableContainer.find(name) == map.end())
+			m_globalVariableContainer[name] = new ImGuiVariable<T>(defaultValue);
 
-		return *reinterpret_cast<T*>(m_globalVariableContrainer[name]->Get())
+		return *reinterpret_cast<T*>(m_globalVariableContainer[name]->Get());
 	}
+#pragma endregion
 
 private:
 	typedef std::unordered_map< std::string, ImGuiVariableBase* > ImGuiVariableNameMap;
 	ImGuiVariableNameMap m_instanceVariableContainer;
-	static ImGuiVariableNameMap m_globalVariableContrainer;
+	static std::unordered_map< size_t, ImGuiVariableNameMap > m_classVariableContainer;
+	static ImGuiVariableNameMap m_globalVariableContainer;
 };

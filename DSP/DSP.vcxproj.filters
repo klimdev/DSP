@@ -81,6 +81,12 @@
     <ClCompile Include="ImGuiVariable.cpp">
       <Filter>Base\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="EquationComponent.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiBase.cpp">
+      <Filter>Base\ImGui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\DearImGui\imconfig.h">
@@ -163,6 +169,9 @@
     </ClInclude>
     <ClInclude Include="ImGuiVariable.h">
       <Filter>Base\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="EquationComponent.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
